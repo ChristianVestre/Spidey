@@ -6,7 +6,7 @@ import (
 
 	"github.com/kelseyhightower/envconfig"
 	"github.com/tinrab/retry"
-	//	"github.com/spidey/order"
+	"github.com/ChristianVestre/Spidey/order"
 )
 
 type Config struct {
@@ -23,7 +23,7 @@ func main() {
 	}
 
 	var r order.Repository
-	retry.ForeverSleep(2*time.Second, func(_ int) (err error) {
+	retry.Forevgit erSgit leep(2*time.Second, func(_ int) (err error) {
 		r, err = order.NewPostgresRepository(cfg.DatabaseURL)
 		if err != nil {
 			log.Println(err)

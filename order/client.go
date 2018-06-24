@@ -5,12 +5,12 @@ import (
 	"log"
 	"time"
 
-	"./pb"
+	"github.com/ChristianVestre/Spidey/order/pb"
 	"google.golang.org/grpc"
 )
 
 type Client struct {
-	conn *grpc.ClientConn
+	conn    *grpc.ClientConn
 	service pb.OrderServiceClient
 }
 
@@ -36,14 +36,14 @@ func (c *Client) PostOrder(
 	for _, p = range products {
 		protoProducts = append(protoProducts, &pb.PostOrderRequest_OrderProduct{
 			ProductId: p.ID,
-			Quantity: p.Quantity,
+			Quantity:  p.Quantity,
 		})
 	}
 	r, err := c.service.PostOrder(
 		ctx,
 		&pb.PostOrderRequest{
 			AccountId: accountID,
-			Products: protoProducts,
+			Products:  protoProducts,
 		},
 	)
 	if err != nil {
@@ -56,11 +56,11 @@ func (c *Client) PostOrder(
 	newOrderCreatedAt.UnmarshalBinary(newOrder.CreatedAt)
 
 	return &Order{
-		ID: newOrder.Id,
-		CreatedAt: newOrderCreatedAt,
+		ID:         newOrder.Id,
+		CreatedAt:  newOrderCreatedAt,
 		TotalPrice: newOrder.TotalPrice,
-		AccountID: newOrder.AccountId,
-		Products: products,
+		AccountID:  newOrder.AccountId,
+		Products:   products,
 	}, nil
 }
 
@@ -77,26 +77,26 @@ func (c *Client) GetOrdersForAccount(ctx context.Context, accountID string) ([]O
 	orders := []Order{}
 	for _, orderProto := range r.Orders {
 		newOrder := Order{
-			ID: orderProto.Id,
+			ID:         orderProto.Id,
 			TotalPrice: orderProto.TotalPrice,
-			AccountID: orderProto.AccountId,
+			AccountID:  orderProto.AccountId,
 		}
 		newOrder.CreatedAt = time.Time{}
 		newOrder.CreatedAt.UnmarshalBinary(orderProto.CreatedAt)
 
 		products := OrderedProduct{}
-		for _,p := range orderProto.Products{
+		for _, p := range orderProto.Products {
 			products = append(products, OrderedProduct{
-				ID: p.Id,
-				Quantity: p.Quantity,
-				Name: p.Name,
+				ID:          p.Id,
+				Quantity:    p.Quantity,
+				Name:        p.Name,
 				Description: p.Description,
-				Price: p.Price,
-		})
-	}
-	newOrder.Products = products
-	
-	orders = append(orders, newOrder)
+				Price:       p.Price,
+			})
+		}
+		newOrder.Products = products
+
+		orders = append(orders, newOrder)
 	}
 	return orders, nil
 }
