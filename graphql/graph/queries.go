@@ -4,9 +4,9 @@ import (
 	context "context"
 	"log"
 	"time"
-) 
+)
 
-funct (s *GraphQLServer) Account_orders(ctx context.Context, obj *Account) ([]Order, error) {
+func (s *GraphQLServer) Account_orders(ctx context.Context, obj *Account) ([]Order, error) {
 	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
 	defer cancel()
 
@@ -18,24 +18,24 @@ funct (s *GraphQLServer) Account_orders(ctx context.Context, obj *Account) ([]Or
 
 	orders := []Order{}
 	for _, o := range r {
-		products := []OrderedProducts{}
-		for _, p := range o.Products{
-			products = append(products, OrderedProducts{
-				ID: p.ID,
-				Name: p.Name,
+		products := []OrderedProduct{}
+		for _, p := range o.Products {
+			products = append(products, OrderedProduct{
+				ID:          p.ID,
+				Name:        p.Name,
 				Description: p.Description,
-				Price: p.Price,
-				Quantity: int(p.Quantity)
+				Price:       p.Price,
+				Quantity:    int(p.Quantity),
 			})
 		}
 		orders = append(orders, Order{
-			ID: o.ID,
-			CreatedAt: o.CreatedAt,
+			ID:         o.ID,
+			CreatedAt:  o.CreatedAt,
 			TotalPrice: o.TotalPrice,
-			Products: products,
+			Products:   products,
 		})
 	}
-	
+
 	return orders, nil
 }
 
@@ -47,12 +47,12 @@ func (s *GraphQLServer) Query_accounts(ctx context.Context, pagination *Paginati
 	if id != nil {
 		r, err := s.accountClient.GetAccount(ctx, *id)
 		if err != nil {
-			log.Printlin(err)
+			log.Println(err)
 			return nil, err
 		}
 
 		return []Account{Account{
-			ID: r.ID,
+			ID:   r.ID,
 			Name: r.Name,
 		}}, nil
 	}
@@ -71,7 +71,7 @@ func (s *GraphQLServer) Query_accounts(ctx context.Context, pagination *Paginati
 	accounts := []Account{}
 	for _, a := range r {
 		account := Account{
-			ID: a.ID,
+			ID:   a.ID,
 			Name: a.Name,
 		}
 		account.Orders, err = s.Account_orders(ctx, &account)
@@ -85,7 +85,7 @@ func (s *GraphQLServer) Query_accounts(ctx context.Context, pagination *Paginati
 }
 
 func (s *GraphQLServer) Query_products(ctx context.Context, pagination *PaginationInput, query *string, id *string) ([]Product, error) {
-	ctx, cancel.WithTimeout(ctx, 3*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
 	defer cancel()
 
 	// Get single
@@ -96,10 +96,10 @@ func (s *GraphQLServer) Query_products(ctx context.Context, pagination *Paginati
 			return nil, err
 		}
 		return []Product{Product{
-			ID: r.ID,
-			Name: r.Name,
+			ID:          r.ID,
+			Name:        r.Name,
 			Description: r.Description,
-			Price: r.Price,
+			Price:       r.Price,
 		}}, nil
 	}
 
@@ -122,10 +122,10 @@ func (s *GraphQLServer) Query_products(ctx context.Context, pagination *Paginati
 	for _, a := range r {
 		products = append(products,
 			Product{
-				ID: a.ID,
-				Name: a.Name,
+				ID:          a.ID,
+				Name:        a.Name,
 				Description: a.Description,
-				Price: a.Price,
+				Price:       a.Price,
 			},
 		)
 	}

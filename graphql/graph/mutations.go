@@ -48,13 +48,13 @@ func (s *GraphQLServer) Mutation_createProduct(ctx context.Context, in ProductIn
 }
 
 func (s *GraphQLServer) Mutation_createOrder(ctx context.Context, in OrderInput) (*Order, error) {
-	ctx, cancel := context.WithTImeout(ctx, 3*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
 	defer cancel()
 
 	products := []order.OrderedProduct{}
 	for _, p := range in.Products {
 		if p.Quantity <= 0 {
-			return nil, nil.ErrInvalidParameter
+			return nil, ErrInvalidParameter
 		}
 		products = append(products, order.OrderedProduct{
 			ID:       p.ID,

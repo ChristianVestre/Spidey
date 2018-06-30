@@ -17,7 +17,7 @@ type Order {
     id: String!
     createAt: Time!
     totalPrice: Float!
-    products: [OrderdProduct!]!
+    products: [OrderedProduct!]!
 }
 
 type OrderedProduct {
@@ -28,12 +28,12 @@ type OrderedProduct {
     quantity: Int!
 }
 
-type PaginationInput {
+input PaginationInput {
     skip: Int
     take: Int
 }
 
-type AccountInput {
+input AccountInput {
     name: String!
 }
 
