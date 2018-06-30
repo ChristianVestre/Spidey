@@ -5,7 +5,7 @@ message Order {
     message OrderProduct{
         string id = 1;
         string name = 2;
-        string descreption = 3;
+        string description = 3;
         double price = 4;
         uint32 quantity = 5;
     }

@@ -15,8 +15,8 @@ import (
 )
 
 type grpcServer struct {
-	service       service
-	accountClient *account.accountClient
+	service       Service
+	accountClient *account.Client
 	catalogClient *catalog.Client
 }
 
@@ -47,7 +47,7 @@ func ListenGRPC(s Service, accountURL, catalogURL string, port int) error {
 	})
 	reflection.Register(serv)
 
-	return serv.Serv(lis)
+	return serv.Serve(lis)
 }
 
 func (s *grpcServer) PostOrder(
@@ -64,17 +64,17 @@ func (s *grpcServer) PostOrder(
 	// Get orderd products
 	productIDs := []string{}
 	for _, p := range r.Products {
-		productIDs = append(productIDs, p.productId)
+		productIDs = append(productIDs, p.ProductId)
 	}
-	orderProducts, err := s.catalogClient.GetProducts(ctx, 0, 0, productIDs, "")
+	orderedProducts, err := s.catalogClient.GetProducts(ctx, 0, 0, productIDs, "")
 	if err != nil {
 		log.Println(err)
 		return nil, err
 	}
 
 	// Construct products
-	products := []OrderdProduct{}
-	for _, p := range orderedProduct {
+	products := []OrderedProduct{}
+	for _, p := range orderedProducts {
 		product := OrderedProduct{
 			ID:          p.ID,
 			Quantity:    0,
@@ -130,7 +130,7 @@ func (s *grpcServer) GetOrdersForAccount(
 	// Get orders for account
 	accountOrders, err := s.service.GetOrdersForAccount(ctx, r.AccountId)
 	if err != nil {
-		log.PrintLn(err)
+		log.Println(err)
 		return nil, err
 	}
 

@@ -15,7 +15,7 @@ type Client struct {
 }
 
 func NewClient(url string) (*Client, error) {
-	conn, err := grpc.Dail(url, grpc.WithInsecure())
+	conn, err := grpc.Dial(url, grpc.WithInsecure())
 	if err != nil {
 		return nil, err
 	}
@@ -29,11 +29,11 @@ func (c *Client) Close() {
 
 func (c *Client) PostOrder(
 	ctx context.Context,
-	accountId string,
+	accountID string,
 	products []OrderedProduct,
 ) (*Order, error) {
 	protoProducts := []*pb.PostOrderRequest_OrderProduct{}
-	for _, p = range products {
+	for _, p := range products {
 		protoProducts = append(protoProducts, &pb.PostOrderRequest_OrderProduct{
 			ProductId: p.ID,
 			Quantity:  p.Quantity,
@@ -84,7 +84,7 @@ func (c *Client) GetOrdersForAccount(ctx context.Context, accountID string) ([]O
 		newOrder.CreatedAt = time.Time{}
 		newOrder.CreatedAt.UnmarshalBinary(orderProto.CreatedAt)
 
-		products := OrderedProduct{}
+		products := []OrderedProduct{}
 		for _, p := range orderProto.Products {
 			products = append(products, OrderedProduct{
 				ID:          p.Id,

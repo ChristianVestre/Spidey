@@ -50,7 +50,7 @@ func (r *postgresRepository) PutOrder(ctx context.Context, o Order) (err error) 
 	_, err = tx.ExecContext(
 		ctx,
 		"INSERT INTO orders(id, created_at, account_id, total_price) VALUES($1,$2,$3,$4)",
-		o.Id,
+		o.ID,
 		o.CreatedAt,
 		o.AccountID,
 		o.TotalPrice,

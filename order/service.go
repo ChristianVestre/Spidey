@@ -7,7 +7,7 @@ import (
 	"github.com/segmentio/ksuid"
 )
 
-type service interface {
+type Service interface {
 	PostOrder(ctx context.Context, accountID string, products []OrderedProduct) (*Order, error)
 	GetOrdersForAccount(ctx context.Context, accountID string) ([]Order, error)
 }
@@ -38,11 +38,11 @@ func NewService(r Repository) Service {
 
 func (s orderService) PostOrder(
 	ctx context.Context,
-	accountId string,
+	accountID string,
 	products []OrderedProduct,
 ) (*Order, error) {
 	o := &Order{
-		ID:        ksuid.New.String(),
+		ID:        ksuid.New().String(),
 		CreatedAt: time.Now().UTC(),
 		AccountID: accountID,
 		Products:  products,
@@ -50,7 +50,7 @@ func (s orderService) PostOrder(
 	// Calculate total price
 	o.TotalPrice += 0.0
 	for _, p := range products {
-		o.TotalPrice += p.Price * float64(p.Quality)
+		o.TotalPrice += p.Price * float64(p.Quantity)
 	}
 	err := s.repository.PutOrder(ctx, *o)
 	if err != nil {
