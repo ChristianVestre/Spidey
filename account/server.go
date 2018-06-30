@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/spidey/account/pb"
+	"github.com/ChristianVestre/Spidey/account/pb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
@@ -26,15 +26,28 @@ func ListenGRPC(s Service, port int) error {
 	return serv.Serve(lis)
 }
 
-func (s *grpcServer) PostAccount(ctx context.Context,  r *pb.PostAccountRequest) (*pb.PostAccountResponse, error){
+func (s *grpcServer) PostAccount(ctx context.Context, r *pb.PostAccountRequest) (*pb.PostAccountResponse, error) {
 	a, err := s.service.PostAccount(ctx, r.Name)
 	if err != nil {
 		return nil, err
 	}
 	return &pb.PostAccountResponse{Account: &pb.Account{
-		Id: a.ID,
+		Id:   a.ID,
 		Name: a.Name,
 	}}, nil
+}
+
+func (s *grpcServer) GetAccount(ctx context.Context, r *pb.GetAccountRequest) (*pb.GetAccountResponse, error) {
+	a, err := s.service.GetAccount(ctx, r.Id)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.GetAccountResponse{
+		Account: &pb.Account{
+			Id:   a.ID,
+			Name: a.Name,
+		},
+	}, nil
 }
 
 func (s *grpcServer) GetAccounts(ctx context.Context, r *pb.GetAccountsRequest) (*pb.GetAccountsResponse, error) {
@@ -47,10 +60,10 @@ func (s *grpcServer) GetAccounts(ctx context.Context, r *pb.GetAccountsRequest) 
 		accounts = append(
 			accounts,
 			&pb.Account{
-				Id: p.ID,
+				Id:   p.ID,
 				Name: p.Name,
 			},
 		)
 	}
-	return &pb.GetAccountsResponse(Accounts: accounts), nil
+	return &pb.GetAccountsResponse{Accounts: accounts}, nil
 }

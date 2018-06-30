@@ -1,7 +1,6 @@
 package account
 
 import (
-
 	"context"
 
 	"github.com/ChristianVestre/Spidey/account/pb"
@@ -9,55 +8,55 @@ import (
 )
 
 type Client struct {
-	conn *grpc.ClientConn
+	conn    *grpc.ClientConn
 	service pb.AccountServiceClient
 }
 
 func NewClient(url string) (*Client, error) {
-	conn, err := grpc.Dail(url, grpc.WithInsecure())
+	conn, err := grpc.Dial(url, grpc.WithInsecure())
 	if err != nil {
 		return nil, err
 	}
 	c := pb.NewAccountServiceClient(conn)
-	return &Client(conn, c), nil
+	return &Client{conn, c}, nil
 }
 
-func (c *Client) Close(){
+func (c *Client) Close() {
 	c.conn.Close()
 }
 
-func (c *Client) PostAccount(ctx context.Context, name string) (*Account, error){
+func (c *Client) PostAccount(ctx context.Context, name string) (*Account, error) {
 	r, err := c.service.PostAccount(
 		ctx,
-		&pb.PostAccountReques{Name: name},
+		&pb.PostAccountRequest{Name: name},
 	)
 	if err != nil {
 		return nil, err
 	}
 	return &Account{
-		ID: r.Account.Id,
-		Name: r.Account.Name
-	}, nil
-}
-
-func (c *Client) GetAccount(ctx context.Context, id string) (*Account, error){
-	r, err := c.Service.GetAccount{
-		ctx,
-		&pb.GetAccountRequest{Id: id},
-	}
-	if err != nil {
-		return nil, err
-	}
-	return &Account{
-		ID: r.Account.Id,
+		ID:   r.Account.Id,
 		Name: r.Account.Name,
 	}, nil
 }
 
-func (c *Client) GetAccounts(ctx context.Context, skip uint64, take uint64) ([Account, error]){
+func (c *Client) GetAccount(ctx context.Context, id string) (*Account, error) {
+	r, err := c.service.GetAccount(
+		ctx,
+		&pb.GetAccountRequest{Id: id},
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &Account{
+		ID:   r.Account.Id,
+		Name: r.Account.Name,
+	}, nil
+}
+
+func (c *Client) GetAccounts(ctx context.Context, skip uint64, take uint64) ([]Account, error) {
 	r, err := c.service.GetAccounts(
 		ctx,
-		&pb.GetAccountRequest{
+		&pb.GetAccountsRequest{
 			Skip: skip,
 			Take: take,
 		},
@@ -68,7 +67,7 @@ func (c *Client) GetAccounts(ctx context.Context, skip uint64, take uint64) ([Ac
 	accounts := []Account{}
 	for _, a := range r.Accounts {
 		accounts = append(accounts, Account{
-			ID: a.Id,
+			ID:   a.Id,
 			Name: a.Name,
 		})
 	}

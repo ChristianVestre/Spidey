@@ -11,7 +11,7 @@ type Repository interface {
 	Close()
 	PutAccount(ctx context.Context, a Account) error
 	GetAccountByID(ctx context.Context, id string) (*Account, error)
-	ListAccounts(ctx context.Context, skip uint64, take uint64) ([Account, error])
+	ListAccounts(ctx context.Context, skip uint64, take uint64) ([]Account, error)
 }
 
 type postgresRepository struct {
@@ -39,7 +39,7 @@ func (r *postgresRepository) Ping() error {
 }
 
 func (r *postgresRepository) PutAccount(ctx context.Context, a Account) error {
-	_, err := r.db.ExecContext(ctx, "INSERT INTO accounts(id, name) VALUES($1,$2)", id)
+	_, err := r.db.ExecContext(ctx, "INSERT INTO accounts(id, name) VALUES($1,$2)", a.ID, a.Name)
 	return err
 }
 
