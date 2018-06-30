@@ -30,7 +30,7 @@ func NewPostgresRepository(url string) (Repository, error) {
 	return &postgresRepository{db}, nil
 }
 
-func (r *postgresRepository) Clost() {
+func (r *postgresRepository) Close() {
 	r.db.Close()
 }
 
