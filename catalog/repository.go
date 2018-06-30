@@ -3,13 +3,14 @@ package catalog
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"log"
 
 	elastic "gopkg.in/olivere/elastic.v5"
 )
 
 var (
-	ErrNotFound = error.New("Entity not found")
+	ErrNotFound = errors.New("Entity not found")
 )
 
 type Repository interface {

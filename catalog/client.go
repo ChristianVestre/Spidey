@@ -17,7 +17,7 @@ func NewClient(url string) (*Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	c := pb.NewCatalogSerivceClient(conn)
+	c := pb.NewCatalogServiceClient(conn)
 	return &Client{conn, c}, nil
 }
 

@@ -16,7 +16,7 @@ type grpcServer struct {
 	service Service
 }
 
-func ListenGRPC(s Service, port int) err {
+func ListenGRPC(s Service, port int) error {
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
 		return err
@@ -57,7 +57,7 @@ func (s *grpcServer) GetProduct(ctx context.Context, r *pb.GetProductRequest) (*
 	}, nil
 }
 
-func (s *grpcServer) GetProducts(ctx context.Context, r *pb.GetProductRequest) (*pb.GetProductsResponse, error) {
+func (s *grpcServer) GetProducts(ctx context.Context, r *pb.GetProductsRequest) (*pb.GetProductsResponse, error) {
 	var res []Product
 	var err error
 	if r.Query != "" {
@@ -74,7 +74,7 @@ func (s *grpcServer) GetProducts(ctx context.Context, r *pb.GetProductRequest) (
 
 	products := []*pb.Product{}
 	for _, p := range res {
-		append(
+		products = append(
 			products,
 			&pb.Product{
 				Id:          p.ID,
@@ -84,5 +84,5 @@ func (s *grpcServer) GetProducts(ctx context.Context, r *pb.GetProductRequest) (
 			},
 		)
 	}
-	return &pb.GetProductResponse{Products: products}, nil
+	return &pb.GetProductsResponse{Products: products}, nil
 }
